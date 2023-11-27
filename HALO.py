@@ -40,6 +40,10 @@ def cnt(df, col):
     ans = len(df[col])
     return ans
 
+def acc(df, rnd=None):
+    ans = round(df['ShotsLanded'].sum() / df['ShotsFired'].sum() * 100,rnd)
+    return ans
+
 # Pivot Tables for Map/GameMode 
 # Map Stats
 mapKD = df.pivot_table(index='Map', 
@@ -109,10 +113,13 @@ catmap10KD[['Dmg/10Min', 'DmgT/10Min']] = catmap10KD[['Dmg/10Min', 'DmgT/10Min']
 
 # Totals
 st.write("Win-Loss:", cnt(dfw, "Outcome"), "-", cnt(dfl, "Outcome"))
+st.write("Current CSR:", df['Csr'].iloc[-1])
+st.write("Maximum CSR:", df['Csr'].max())
 st.write("Time Played(h):", round(tot(df, 'LengthSeconds')/60/60,2))
 st.write("Kills:",tot(df,"Kills",),)
 st.write("Deaths:",tot(df,"Deaths",),)
 st.write("Assists:",tot(df,"Assists",),)
+st.write("Accuracy(%):",acc(df,2),)
 st.write("Medals:",tot(df,"Medals",),)
 st.write("Damage Done:",tot(df,"DamageDone",),)
 st.write("Damage Taken:",tot(df,"DamageTaken",),)
@@ -120,7 +127,7 @@ st.write("Damage Taken:",tot(df,"DamageTaken",),)
 # Tabs
 tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(
     [
-        "KD/Damage/Win Rate Over Time",
+        "KD/Damage/CSR Over Time",
         "Boxplots",
         "Stats in Wins vs Losses",
         "Map & Mode Stats",
@@ -130,7 +137,7 @@ tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(
 )
 
 with tab1:
-    st.image("Plots/DamKDRatiosWinRate.png")
+    st.image("Plots/DamKDRatiosCsr.png")
     pass
 
 with tab2:
@@ -138,13 +145,33 @@ with tab2:
     pass
 
 with tab3:
-    col1, col2 = st.columns(2)
+    col1, col2, col3 = st.columns(3)
     with col1:
+        st.markdown("## Total")
+        st.write("Average Kills:", avg(df, "Kills", 2))
+        st.write("Average Deaths:", avg(df, "Deaths", 2))
+        st.write("KD Ratio:", round(tot(df,"Kills") / tot(df, "Deaths"),2))
+        st.write("Average Assists:", avg(df, "Assists", 2))
+        st.write("Accuracy(%):", acc(df,2))
+        st.write("Damage Ratio:", round(tot(df, "DamageDone") / tot(df, "DamageTaken"), 2))
+        st.write("Average Damage Done:", avg(df, "DamageDone",))
+        st.write("Average Damage Taken:", avg(df, "DamageTaken",))
+        st.markdown("  \n  ")
+        st.markdown('#### Per 10 Minute Stats')
+        st.write("Average Kills/10Min:", avg(df, "Kills/10Min", 2))
+        st.write("Average Deaths/10Min:", avg(df, "Deaths/10Min", 2))
+        st.write("Average Assists/10Min:", avg(df, "Assists/10Min", 2))
+        st.write("Average Damage/10Min:", avg(df, "Dmg/10Min",)) 
+        st.write("Average Damage Taken/10Min:", avg(df, "DmgT/10Min",))
+        pass
+    
+    with col2:
         st.markdown("## Wins")
         st.write("Average Kills:", avg(dfw, "Kills", 2))
         st.write("Average Deaths:", avg(dfw, "Deaths", 2))
         st.write("KD Ratio:", round(tot(dfw,"Kills") / tot(dfw, "Deaths"),2))
         st.write("Average Assists:", avg(dfw, "Assists", 2))
+        st.write("Accuracy(%):", acc(dfw,2))
         st.write("Damage Ratio:", round(tot(dfw, "DamageDone") / tot(dfw, "DamageTaken"), 2))
         st.write("Average Damage Done:", avg(dfw, "DamageDone",))
         st.write("Average Damage Taken:", avg(dfw, "DamageTaken",))
@@ -157,12 +184,13 @@ with tab3:
         st.write("Average Damage Taken/10Min:", avg(dfw, "DmgT/10Min",))
         pass
 
-    with col2:
+    with col3:
         st.markdown("## Losses")
         st.write("Average Kills:", avg(dfl, "Kills", 2))
         st.write("Average Deaths:", avg(dfl, "Deaths", 2))
         st.write("KD Ratio:", round(tot(dfl,"Kills") / tot(dfl, "Deaths"),2))
         st.write("Average Assists:", avg(dfl, "Assists", 2))
+        st.write("Accuracy(%):", acc(dfl,2))
         st.write("Damage Ratio:", round(tot(dfl, "DamageDone") / tot(dfl, "DamageTaken"), 2))
         st.write("Average Damage Done:", avg(dfl, "DamageDone",))
         st.write("Average Damage Taken:", avg(dfl, "DamageTaken",))
