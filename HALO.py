@@ -19,22 +19,18 @@ df = pd.read_csv("df.csv")
 dfw = df[df["Outcome"] == 1]
 dfl = df[df["Outcome"] == 0]
 
-
 # Functions for stats
 def avg(df, col, rnd=None):
     ans = round(df[col].mean(), rnd)
     return ans
 
-
 def med(df, col, rnd=None):
     ans = round(df[col].median(), rnd)
     return ans
 
-
 def tot(df, col, rnd=None):
     ans = round(df[col].sum(), rnd)
     return ans
-
 
 def cnt(df, col):
     ans = len(df[col])
@@ -125,9 +121,10 @@ st.write("Damage Done:",tot(df,"DamageDone",),)
 st.write("Damage Taken:",tot(df,"DamageTaken",),)
 
 # Tabs
-tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(
+tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs(
     [
-        "KD/Damage/CSR Over Time",
+        "WinRate/CSR Over Time",
+        "KD/Damage/Acc Over Time",
         "Boxplots",
         "Stats in Wins vs Losses",
         "Map & Mode Stats",
@@ -137,14 +134,18 @@ tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(
 )
 
 with tab1:
-    st.image("Plots/DamKDRatiosCsr.png")
+    st.image("Plots/WinRateCSR.png")
     pass
 
 with tab2:
-    st.image("Plots/Boxplots.png")
+    st.image("Plots/DamKDRatiosAcc.png")
     pass
 
 with tab3:
+    st.image("Plots/Boxplots.png")
+    pass
+
+with tab4:
     col1, col2, col3 = st.columns(3)
     with col1:
         st.markdown("## Total")
@@ -204,7 +205,7 @@ with tab3:
         
         pass
 
-with tab4:
+with tab5:
     col1, col2 = st.columns(2)
     with col1:
         st.markdown('## Map Stats')
@@ -220,7 +221,7 @@ with tab4:
         pass
     pass
 
-with tab5:
+with tab6:
     col1, col2 = st.columns(2)
     with col1:
         st.markdown('## Map/Mode')
@@ -232,6 +233,6 @@ with tab5:
         pass
     pass
 
-with tab6:
+with tab7:
     st.dataframe(df)
     pass

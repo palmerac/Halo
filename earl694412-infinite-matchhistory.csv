@@ -431,3 +431,50 @@ Date,Player,MatchId,Map,Category,Playlist,Input,Queue,Csr,Mmr,Outcome,Accuracy,D
 "2023-11-24 04:46:04",eArL694412,704ad04a-10a3-4ffd-87a9-7b606b96b446,Aquarius,"CTF 5 Captures","Ranked Arena",CrossPlay,Open,944,,Win,53.23,5538,5201,248,132,116,1.19,5.00,19,16,6,0,0,17,16,2275,0,3,752
 "2023-11-24 05:00:01",eArL694412,f88cb318-e1af-4c0b-bca4-5cefe0887ef4,Solitude,Strongholds,"Ranked Arena",CrossPlay,Open,953,,Loss,52.82,6425,6300,301,159,142,1.26,7.00,24,19,6,0,0,18,19,3175,0,6,815
 "2023-11-24 05:15:13",eArL694412,ce26bd07-f356-4c17-b0ca-02ba316d43a1,"Live Fire",Strongholds,"Ranked Arena",CrossPlay,Open,947,,Win,53.66,8034,5929,328,176,152,2.27,15.33,25,11,4,0,0,20,17,3375,0,13,781
+"2023-11-25 21:50:59",eArL694412,6056174d-3fa0-420e-b240-da3100011599,"Live Fire",Extraction,"Ranked Arena",CrossPlay,Open,957,,Loss,71.11,4074,3776,135,96,39,1.08,2.33,14,13,4,0,0,10,11,1950,0,10,475
+"2023-11-25 22:00:16",eArL694412,0b4ea306-c7c2-46a1-9ba9-3fd826066959,Forbidden,"CTF 3 Captures","Ranked Arena",CrossPlay,Open,950,,Win,62.44,5027,5202,205,128,77,1.00,2.33,14,14,7,0,1,16,15,1830,0,5,757
+"2023-11-25 22:15:25",eArL694412,66cebbd3-9e7a-406e-8760-67438b2a7217,Empyrean,"CTF 3 Captures","Ranked Arena",CrossPlay,Open,959,,Loss,45.92,5488,6089,294,135,159,0.42,-8.00,8,19,9,0,0,16,16,1445,0,3,778
+"2023-11-25 22:30:19",eArL694412,b5f16d75-8f85-4eb6-ab1c-286b6291cb8f,"Live Fire",Strongholds,"Ranked Arena",CrossPlay,Open,952,,Win,54.82,4204,3382,166,91,75,1.44,5.66,13,9,5,0,0,11,11,1900,0,8,495
+"2023-11-26 01:45:04",eArL694412,dd5cc123-5278-44a4-bb74-196aa0013c2f,Streets,Extraction,"Ranked Arena",CrossPlay,Open,961,,Win,24.39,347,276,41,10,31,0.00,1.00,0,0,3,0,0,0,0,950,0,4,273
+"2023-11-26 01:50:40",eArL694412,a5422d94-1f0b-4971-b1b3-6d58cf4d2f0a,Empyrean,"CTF 3 Captures","Ranked Arena",CrossPlay,Open,966,,Win,44.2,3743,4056,181,80,101,0.73,-0.66,11,15,10,0,0,13,13,1735,0,6,650
+"2023-11-26 02:04:20",eArL694412,348e060c-36aa-48da-a69c-cf67388d8b2b,Streets,Oddball,"Ranked Arena",CrossPlay,Open,974,,Win,54.92,8824,6594,366,201,165,1.10,11.00,22,20,27,0,0,17,15,3890,0,10,870
+"2023-11-26 02:23:54",eArL694412,927a2ec8-ecbb-43fe-ac64-f190cf24c36e,Solitude,"King of the Hill","Ranked Arena",CrossPlay,Open,982,,Left,58.57,3489,3844,140,82,58,0.57,-4.00,8,14,6,0,0,10,13,1375,0,3,510
+"2023-11-26 02:32:22",eArL694412,f31ff6ab-e649-4a54-820e-eec9744daf35,Streets,Extraction,"Ranked Arena",CrossPlay,Open,973,,Win,55.56,4189,2927,189,105,84,2.13,11.33,17,8,7,0,0,11,11,2875,0,11,481
+"2023-11-27 02:24:00",eArL694412,4ef8b04a-c56b-437a-858b-b2c6da8dfb46,Streets,Oddball,"Ranked Arena",CrossPlay,Open,982,,Loss,49.28,4950,4107,207,102,105,0.69,0.33,9,13,13,0,0,13,14,2070,0,10,578
+"2023-11-27 02:35:28",eArL694412,83efddb7-d84a-4a30-8cf5-a12559c5e893,Recharge,Oddball,"Ranked Arena",CrossPlay,Open,974,,Win,48.31,4155,2804,178,86,92,1.63,6.66,13,8,5,0,0,12,12,1635,0,4,506
+"2023-11-27 02:45:16",eArL694412,dfb10369-dcd7-47a2-9856-2f04b8fc2406,"Live Fire","King of the Hill","Ranked Arena",CrossPlay,Open,982,,Win,48.39,4527,6511,217,105,112,0.61,-7.00,14,23,6,0,0,19,20,2125,0,3,747
+"2023-11-27 02:59:31",eArL694412,400bacea-4e70-4ef6-9d86-61758aa1e8cd,Solitude,Slayer,"Ranked Arena",CrossPlay,Open,989,,Win,45.61,3644,3745,228,104,124,0.58,-2.00,7,12,9,0,0,11,12,1160,0,5,520
+"2023-11-27 04:01:22",eArL694412,97e4aa89-4a5e-43d5-9a9d-71da8038cc25,Streets,Extraction,"Ranked Arena",CrossPlay,Open,996,,Loss,52.34,5292,5499,214,112,102,0.88,1.33,14,16,10,0,0,16,17,2425,0,10,706
+"2023-11-27 04:15:07",eArL694412,e3782251-c323-48f0-bb1c-1f2c33fd383d,Streets,Oddball,"Ranked Arena",CrossPlay,Open,987,,Left,59.21,1922,1642,76,45,31,1.20,2.33,6,5,4,0,0,5,6,1280,0,1,574
+"2023-11-27 04:21:51",eArL694412,05aab6b5-997a-4d3d-87d3-d350c6645c92,Forbidden,"CTF 3 Captures","Ranked Arena",CrossPlay,Open,972,,Win,53.78,5415,3165,238,128,110,2.00,12.66,18,9,11,0,0,14,13,2580,0,7,643
+"2023-11-27 04:35:56",eArL694412,13b9c505-88c9-4179-9c2f-fb3d394dd5a1,"Live Fire",Strongholds,"Ranked Arena",CrossPlay,Open,980,,Loss,50.96,5798,5849,261,133,128,0.69,-2.33,11,16,8,0,0,15,16,1950,0,6,667
+"2023-11-27 04:48:31",eArL694412,6613de1b-b4b6-45fe-9274-e5d8c8142d32,Aquarius,Slayer,"Ranked Arena",CrossPlay,Open,972,,Win,52.08,3440,2928,144,75,69,0.88,1.33,7,8,7,0,0,10,10,1070,0,3,437
+"2023-11-27 04:59:21",eArL694412,fa5df86f-41fc-45a5-afe2-3fcf47cb884c,Solitude,Strongholds,"Ranked Arena",CrossPlay,Open,980,,Loss,52.19,7000,6719,297,155,142,0.86,1.00,19,22,12,0,0,18,20,3175,0,12,844
+"2023-11-27 05:17:15",eArL694412,57b757b6-6776-40ba-8f58-a5b244974e20,Aquarius,Slayer,"Ranked Arena",CrossPlay,Open,972,,Win,48.55,6465,5341,311,151,160,1.00,2.33,14,14,7,0,0,17,16,1760,0,5,735
+"2023-11-27 05:30:55",eArL694412,f5a2584e-01ac-4bfd-9ce6-1b2894836908,"Live Fire",Extraction,"Ranked Arena",CrossPlay,Open,980,,Loss,57.71,4489,3104,175,101,74,1.18,3.00,13,11,3,0,0,10,10,1525,0,9,449
+"2023-11-27 05:42:48",eArL694412,23b1969f-d352-4f1c-917d-c2188cc17c8c,Streets,Extraction,"Ranked Arena",CrossPlay,Open,972,,Win,59.31,4791,3658,204,121,83,1.67,8.33,15,9,7,0,0,11,11,2750,0,6,477
+"2023-11-27 05:52:10",eArL694412,d74be370-3543-40f3-81a8-dfa2adbfa8a6,Recharge,Strongholds,"Ranked Arena",CrossPlay,Open,980,,Left,68.42,453,544,19,13,6,0.00,-1.00,0,1,0,0,0,0,3,0,0,0,363
+"2023-11-27 22:55:34",eArL694412,89f29019-0b8a-4c3b-af17-9878fc839d0a,Forbidden,"CTF 3 Captures","Ranked Arena",CrossPlay,Open,965,,Win,60.94,3255,1110,128,78,50,5.00,10.00,10,2,6,0,0,6,6,1325,0,7,272
+"2023-11-27 23:01:30",eArL694412,efc09ab8-7cd2-4fcb-830a-9392ea41c3a3,"Live Fire","King of the Hill","Ranked Arena",CrossPlay,Open,974,,Loss,58.36,7097,6100,317,185,132,1.28,7.33,23,18,7,0,0,16,17,3175,0,8,656
+"2023-11-28 01:49:31",eArL694412,90a38ddd-5069-45ae-ac5e-35398f60da8b,"Live Fire",Strongholds,"Ranked Arena",CrossPlay,Open,967,,Win,54.73,7581,6983,296,162,134,1.09,6.33,24,22,13,0,0,23,21,3950,0,12,945
+"2023-11-28 02:08:38",eArL694412,6a16d234-de96-4f3d-a111-2ee26cc9d67f,Argyle,"CTF 3 Captures","Ranked Arena",CrossPlay,Open,975,,Win,51.1,6017,4581,272,139,133,1.31,7.33,17,13,10,0,0,16,16,2245,0,6,772
+"2023-11-28 02:22:37",eArL694412,6cf96f5f-1c17-461e-86c0-c37cbc73095f,Solitude,"King of the Hill","Ranked Arena",CrossPlay,Open,983,,Win,53.03,7471,5678,330,175,155,1.59,13.33,27,17,10,0,0,21,20,3650,0,6,794
+"2023-11-28 02:37:06",eArL694412,1725e3fd-c1c2-42f9-bd0c-ee3d265da222,Recharge,Extraction,"Ranked Arena",CrossPlay,Open,992,,Win,54.4,7011,6383,318,173,145,1.00,5.66,21,21,17,0,0,21,21,3915,0,8,910
+"2023-11-28 03:05:11",eArL694412,e0173f16-0ebe-4eab-b3ad-c6e08bff2175,Recharge,Slayer,"Ranked Arena",CrossPlay,Open,1000,,Win,59.46,4057,3228,148,88,60,1.71,6.66,12,7,5,0,0,11,11,1450,0,5,501
+"2023-11-28 03:15:53",eArL694412,66c8c4b2-860e-47ad-8ddc-c439d6918b9e,Streets,Extraction,"Ranked Arena",CrossPlay,Open,1008,,Loss,57.79,5571,3978,199,115,84,1.15,4.33,15,13,7,0,0,11,12,2125,0,8,508
+"2023-11-28 03:27:32",eArL694412,bb2ad7e4-5aef-4163-99c7-b24502e3de63,Streets,Oddball,"Ranked Arena",CrossPlay,Open,1000,,Win,66.47,4961,3067,170,113,57,2.29,11.33,16,7,7,0,0,12,12,2310,0,8,489
+"2023-11-28 03:37:38",eArL694412,59a3919c-41d3-4eb1-9ea3-da87b658dbca,"Live Fire",Extraction,"Ranked Arena",CrossPlay,Open,1008,,Win,52.7,4121,2674,148,78,70,2.60,10.00,13,5,6,0,0,9,8,2450,0,8,386
+"2023-11-28 03:46:03",eArL694412,344340ef-2c2f-4e95-a441-8da6efe1efc2,"Live Fire","King of the Hill","Ranked Arena",CrossPlay,Open,1016,,Win,58.29,5277,4337,211,123,88,0.82,0.00,14,17,9,0,0,15,16,2175,0,4,649
+"2023-11-28 04:00:26",eArL694412,2fd19ca8-55f8-4e07-84aa-73dbcffca30f,Recharge,Oddball,"Ranked Arena",CrossPlay,Open,1023,,Loss,52.36,10374,8102,466,244,222,1.33,13.00,28,21,18,0,0,26,31,4370,2,10,1201
+"2023-11-28 04:26:24",eArL694412,b02d0818-d4d2-48a6-9040-d3f214c213d9,Solitude,Strongholds,"Ranked Arena",CrossPlay,Open,1015,,Win,55.52,7076,4799,299,166,133,1.47,10.33,22,15,10,0,0,16,17,3200,0,9,742
+"2023-11-28 04:42:48",eArL694412,eaf0592f-4033-4ecd-bfc0-e38b4af4201a,Recharge,Extraction,"Ranked Arena",CrossPlay,Open,1023,,Win,52.55,5355,4935,274,144,130,0.86,1.00,12,14,9,0,0,14,15,2460,0,8,636
+"2023-11-28 04:55:23",eArL694412,ee9571be-1bdc-4b9f-a36a-26c229a449e2,Streets,Oddball,"Ranked Arena",CrossPlay,Open,1030,,Win,59.62,7505,5947,317,189,128,1.00,3.33,19,19,10,0,0,19,20,2710,0,4,819
+"2023-11-28 05:11:43",eArL694412,1c88c9bf-1e97-4df2-931e-be505a484e46,Solitude,Strongholds,"Ranked Arena",CrossPlay,Open,1037,,Left,58.06,878,686,31,18,13,0.67,-1.00,2,3,0,0,0,1,4,200,0,1,282
+"2023-11-28 05:14:22",eArL694412,e47018ee-5b42-4f30-9f62-0839b7949f96,Argyle,"CTF 3 Captures","Ranked Arena",CrossPlay,Open,1032,,Win,53.5,6000,4817,286,153,133,1.82,11.66,20,11,8,0,0,16,16,2510,0,8,755
+"2023-11-28 05:29:27",eArL694412,6e546213-56b6-4aa1-9b8a-7289da47136f,Recharge,Oddball,"Ranked Arena",CrossPlay,Open,1039,,Win,51.52,3280,2543,132,68,64,1.00,1.66,6,6,5,0,0,10,9,1170,0,1,472
+"2023-11-28 05:38:36",eArL694412,d27680f9-3987-408c-bb17-e00025f515d6,Empyrean,"CTF 3 Captures","Ranked Arena",CrossPlay,Open,1046,,Win,51.32,2191,2322,76,39,37,0.86,-0.66,6,7,1,0,0,8,8,650,0,1,394
+"2023-11-28 05:47:18",eArL694412,522e9c53-5458-434f-8bda-e2405c3ee0ea,Streets,Oddball,"Ranked Arena",CrossPlay,Open,1053,,Win,50.43,2243,2253,115,58,57,0.80,1.66,4,5,8,0,0,9,8,1400,0,0,418
+"2023-11-28 05:58:22",eArL694412,fd442a41-7aad-4067-a4f2-a342c8cd928f,"Live Fire",Extraction,"Ranked Arena",CrossPlay,Open,1058,,Loss,56.11,4864,4883,180,101,79,1.07,3.00,15,14,6,0,0,12,14,2025,0,12,581
+"2023-11-28 06:11:26",eArL694412,fcf359c2-f272-4101-8b33-479a201fb554,Streets,Oddball,"Ranked Arena",CrossPlay,Open,1049,,Win,57.48,7358,7444,301,173,128,1.09,6.66,25,23,14,0,0,21,22,3720,0,9,886
+"2023-11-28 06:28:47",eArL694412,e398e7b9-f598-413c-adf5-045e47b20e2b,Streets,Slayer,"Ranked Arena",CrossPlay,Open,1056,,Loss,48.7,3858,3185,193,94,99,0.80,0.00,8,10,6,0,0,9,11,1110,0,4,463
+"2023-11-28 06:38:01",eArL694412,593dea78-9547-4b15-ab0d-1999ba022bce,Recharge,Strongholds,"Ranked Arena",CrossPlay,Open,1047,,Loss,50,3538,4807,146,73,73,0.47,-6.33,7,15,5,0,0,12,14,1425,0,3,578
