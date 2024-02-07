@@ -12,3 +12,10 @@ scorigami.csv - list of the scorigami values that are duplicates (happened more 
 requirements.txt - requirements for streamlit website  
 
 Plots are fairly self explanatory  
+
+Could be ran for any user by: 
+1. Fork/Cloning Repo
+2. Getting User Data from https://leafapp.co/player/{username}/matches
+   1. 'Request Stat Update' then 'export to csv'
+3. Fix file path to new user data in cell 2 of halo.ipynb
+4. Run all cells
