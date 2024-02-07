@@ -123,8 +123,8 @@ st.write("Damage Taken:",tot(df,"DamageTaken",),)
 # Tabs
 tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs(
     [
-        "WinRate/CSR Over Time",
-        "KD/Damage/Acc Over Time",
+        "KD/Damage/WR/Acc Over Time",
+        "KD/Damage/CSR Over Time",
         "Boxplots",
         "Stats in Wins vs Losses",
         "Map & Mode Stats",
@@ -134,11 +134,11 @@ tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs(
 )
 
 with tab1:
-    st.image("Plots/WinRateCSR.png")
+    st.image("Plots/DamKDWRAcc.png")
     pass
 
 with tab2:
-    st.image("Plots/DamKDRatiosAcc.png")
+    st.image("Plots/KDDamCSR.gif")
     pass
 
 with tab3:
@@ -216,10 +216,12 @@ with tab5:
     with col2:
         st.markdown('## Mode Stats')
         st.dataframe(catKD)
+        st.markdown('\n\n  ')
         st.markdown('#### Per 10 min')
         st.dataframe(cat10KD)
         pass
     pass
+    st.image('Plots/ModeDistro.png')
 
 with tab6:
     col1, col2 = st.columns(2)
