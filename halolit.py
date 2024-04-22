@@ -16,7 +16,7 @@ st.sidebar.markdown("To run with your own Halo data, follow these steps:")
 st.sidebar.markdown("1. Go to leafapp.co and navigate to your Matches page")
 st.sidebar.markdown("2. Press the Request Stat Update button on the left sidebar")
 st.sidebar.markdown("3. Enter your gamertag, press Fetch Stats")
-gamertag = st.sidebar.text_input("Enter your gamertag")
+gamertag = st.sidebar.text_input("Enter your gamertag").replace(' ', '%20')
 fetch_from_website = st.sidebar.button("Fetch Stats")
 
 if 'df' not in st.session_state or fetch_from_website:
@@ -138,7 +138,7 @@ with tab1:
         st.text(f"Average Game Time: {avg_min} min {avg_sec} sec")
         st.text(f"Current CSR: {dfr['Csr'].iloc[-1]}")
         st.text(f"Highest CSR: {dfr['Csr'].max()}")
-        st.text(f"Winrate: {round(len(dfr[dfr['Outcome'] == 1]) / len(dfr[dfr['Outcome'] == 0]),2)}")
+        st.text(f"Winrate: {round((len(dfr[dfr['Outcome'] == 1]) / len(dfr)*100),2)}")
         st.text(f"Wins-Losses-Draws: {len(dfr[dfr['Outcome'] == 1])}-{len(dfr[dfr['Outcome'] == 0])}-{len(dfr[dfr['Outcome'] == 0.5])}")
         st.text(f"KD: {round(dfr['Kills'].sum() / dfr['Deaths'].sum(),2)}")
         st.text(f"Accuracy: {round(dfr['ShotsLanded'].sum() / dfr['ShotsFired'].sum()*100,2)}%")
@@ -183,7 +183,7 @@ with tab2:
         st.pyplot(fig)
 
     with tab22:
-        mar_cols = ['KD', 'KDA', 'DamageRatio', 'Damage/KA', 'Damage/Life', 'ExDamage/Life', 'Assists/Life']
+        mar_cols = ['KD', 'KDA', 'DamageRatio', 'Damage/KA', 'Damage/Life', 'ExDamage/Life', 'Assists/Life', 'Winrate']
         selected_cols = st.multiselect('Select Columns', mar_cols, default=[mar_cols[0], mar_cols[2]])
 
         # Create an input cell to enter a moving average period
@@ -202,7 +202,8 @@ with tab2:
                 'ExDamage/Life': ((dfr['DamageDone'].rolling(window=mar_period).sum() - 
                                    dfr['DamageTaken'].rolling(window=mar_period).sum()) /
                                    dfr['Deaths'].rolling(window=mar_period).sum()),
-                'Assists/Life': dfr['Assists'].rolling(window=mar_period).sum() / dfr['Deaths'].rolling(window=mar_period).sum()
+                'Assists/Life': dfr['Assists'].rolling(window=mar_period).sum() / dfr['Deaths'].rolling(window=mar_period).sum(),
+                'Winrate': round((dfr['Outcome'].rolling(window=mar_period).sum() / mar_period*100),2)
             }
             ax.plot(dfr.index, calculation_mapping[col], label=col)
         plt.title(f"{', '.join(selected_cols)} {moving_average_period} Game Moving Average")
