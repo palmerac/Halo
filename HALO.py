@@ -1,240 +1,242 @@
-import streamlit as st
 import pandas as pd
 import numpy as np
+import streamlit as st
 import matplotlib.pyplot as plt
+import datetime as dt
+import seaborn as sns
+import ssl
 
-# Initial Setup
+plt.style.use('ggplot')
 st.set_page_config(layout="wide")
 
-# Title and Intro Text
-st.title("Halo Infinite Dashboard")
-st.markdown("\n  ")
-st.text("This is a dashboard for my Halo Infinite ranked games.")
-st.text("It has a bunch of graphs and statistics.")
-st.markdown("Created with ❤️ by [Aaron Palmer](https://github.com/palmerac/).")
-st.markdown("\n  ")
+st.title('Halo Infinite Dashboard')
 
-# Read/Convert CSV for raw and W/L dataframes
-df = pd.read_csv("df.csv")
-dfw = df[df["Outcome"] == 1]
-dfl = df[df["Outcome"] == 0]
+# Intro + Gamertag search
+st.sidebar.markdown("To run with your own Halo data, follow these steps:")
+st.sidebar.markdown("1. Go to leafapp.co and navigate to your Matches page")
+st.sidebar.markdown("2. Press the Request Stat Update button on the left sidebar")
+st.sidebar.markdown("3. Enter your gamertag, press Fetch Stats")
+gamertag = st.sidebar.text_input("Enter your gamertag")
+fetch_from_website = st.sidebar.button("Fetch Stats")
 
-# Functions for stats
-def avg(df, col, rnd=None):
-    ans = round(df[col].mean(), rnd)
-    return ans
+if 'df' not in st.session_state or fetch_from_website:
+    try:
+        ssl._create_default_https_context = ssl._create_unverified_context
+        df = pd.read_csv(f'https://leafapp.co/player/{gamertag}/matches/csv/matches')
+    except Exception as e:
+        st.error(f"An error occurred while trying to fetch data from the website: {e}")
+        df = pd.read_csv('earl694412-infinite-matchhistory.csv')
+    st.session_state.df = df
+else:
+    df = st.session_state.df
 
-def med(df, col, rnd=None):
-    ans = round(df[col].median(), rnd)
-    return ans
 
-def tot(df, col, rnd=None):
-    ans = round(df[col].sum(), rnd)
-    return ans
+# Data Modification
+df['Date'] = pd.to_datetime(df['Date'])
+df['LengthMinutes'] = df['LengthSeconds'] / 60
+df.rename(columns={'TotalKills': 'Kills'}, inplace=True)
+df['KillsBody'] = df['Kills'] - df['KillsGrenade'] - df['KillsHeadshot'] - df['KillsMelee'] - df['KillsPower']
 
-def cnt(df, col):
-    ans = len(df[col])
-    return ans
+## Per 10 Mins and Excess
 
-def acc(df, rnd=None):
-    ans = round(df['ShotsLanded'].sum() / df['ShotsFired'].sum() * 100,rnd)
-    return ans
+tenmins = ['Kills', 'Deaths', 'Assists', 'DamageDone', 'DamageTaken', 'ShotsLanded', 'ShotsFired']
 
-# Pivot Tables for Map/GameMode 
-# Map Stats
-mapKD = df.pivot_table(index='Map', 
-                        values=['Kills', 'Deaths', 'Assists', 'Accuracy', 'DamageDone', 'DamageTaken', 'Outcome'], 
-                        aggfunc='mean')
+for i in tenmins:
+    df[f'{i}/10Min'] = (df[i].replace(0,1) / df['LengthMinutes']) * 10
 
-desired_col_order = ['Kills', 'Deaths', 'Assists', 'Accuracy', 'DamageDone', 'DamageTaken','Outcome']
+df['ExcessKills'] = df['Kills'].replace(0,1) - df['ExpectedKills'].replace(0,1)
+df['ExcessDeaths'] = df['ExpectedDeaths'].replace(0,1) - df['Deaths'].replace(0,1)
 
-mapKD = mapKD.reindex(desired_col_order, axis=1)
-mapKD = mapKD.round(2)
-mapKD[['DamageDone', 'DamageTaken']] = mapKD[['DamageDone', 'DamageTaken']].round()
+## Ratios
+df['DamageRatio'] = df['DamageDone'].replace(0, 1) / df['DamageTaken'].replace(0, 1)
+df['Damage/KA'] = df['DamageDone'].replace(0,1) / (df['Assists'].replace(0,1) + df['Kills'].replace(0,1))
+df['Damage/Life'] = df['DamageDone'].replace(0,1) / (df['Deaths'].replace(0,1))
+df['Assists/Life'] = df['Assists'].replace(0,1) / df['Deaths'].replace(0,1)
 
-# Map per 10 min stats
-map10KD = df.pivot_table(index='Map', 
-                        values=['Kills/10Min', 'Deaths/10Min', 'Assists/10Min', 'Dmg/10Min', 'DmgT/10Min', 'Outcome'], 
-                        aggfunc='mean')
 
-desired_col10_order = ['Kills/10Min', 'Deaths/10Min', 'Assists/10Min', 'Dmg/10Min', 'DmgT/10Min', 'Outcome']
+## Lifetime
+df['LifetimeKD'] = df['Kills'].cumsum() / df['Deaths'].cumsum()
+df['LifetimeDmgRatio'] = df['DamageDone'].cumsum() / df['DamageTaken'].cumsum()
+df['LifetimeAcc'] = df['ShotsLanded'].cumsum() / df['ShotsFired'].cumsum() * 100
+df['LifetimeBodyPct'] = df['KillsBody'].cumsum() / df['Kills'].cumsum() *100
+df['LifetimeMeleePct'] = df['KillsMelee'].cumsum() / df['Kills'].cumsum() * 100
+df['LifetimeHSPct'] = df['KillsHeadshot'].cumsum() / df['Kills'].cumsum() * 100
+df['LifetimeGrenadePct'] = df['KillsGrenade'].cumsum() / df['Kills'].cumsum() * 100
+df['LifetimePowerPct'] = df['KillsPower'].cumsum() / df['Kills'].cumsum() * 100
 
-map10KD = map10KD.reindex(desired_col10_order, axis=1)
-map10KD = map10KD.round(2)
-map10KD[['Dmg/10Min', 'DmgT/10Min']] = map10KD[['Dmg/10Min', 'DmgT/10Min']].round()
+df['Map'] = df['Map'].str.replace(' - Ranked', '')
+df['Category'] = df['Category'].str.replace('3 Captures', '').str.replace('5 Captures', '')
 
-# GameMode Stats
-catKD = df.pivot_table(index='Category', 
-                        values=['Kills', 'Deaths', 'Assists', 'Accuracy', 'DamageDone', 'DamageTaken','Outcome'], 
-                        aggfunc='mean')
+df = df.drop(['Player', 'MatchId', 'Input', 'Queue', 'Mmr', 'WasAtStart', 'WasAtEnd',
+            'WasInProgressJoin', 'AssistsEmp', 'AssistsDriver', 'AssistsCallout', 'VehicleDestroys',
+            'VehicleHijacks', 'Perfects', 'PreCsr', 'SeasonNumber', 'SeasonVersion'],axis=1)
+dfr = df[df['Date']> '2023-01-01']
+dfr = dfr[dfr['Playlist'] == 'Ranked Arena']
+dfr['Csr'] = dfr['PostCsr'].replace(0, method='ffill')
+# dfr = dfr[dfr['Outcome'] != 'Draw']
+dfr = dfr[dfr['Outcome'] != 'Left']
+dfr['Outcome'] = dfr['Outcome'].map({'Win': 1, 'Loss': 0, 'Draw':0.5})
+dfr['LifetimeWinRate'] = (dfr['Outcome'].cumsum() / 
+                          (dfr['Outcome'].cumsum() + 
+                           dfr['Outcome'].eq(0).cumsum())).fillna(0)
+dfr = dfr.drop(['Playlist', 'PostCsr'], axis=1).reset_index()
+dfr.loc[:4, 'Csr'] = 808
+ # Scorigami
+dfGami = pd.DataFrame()
+dfGami['Kills'] = dfr['Kills']
+dfGami['Deaths'] = dfr['Deaths']
+dfGami['Assists'] = dfr['Assists']
+dfGami['Scorigami'] = dfr['Kills'].astype(str) + '-' + dfr['Deaths'].astype(str) + '-' + dfr['Assists'].astype(str)
+dfGami = dfGami.sort_values(by=['Kills', 'Deaths', 'Assists'], ascending=False)
+gamiPiv = dfGami.pivot_table(index='Scorigami', aggfunc='size')
+gamiPiv = gamiPiv.sort_index()
 
-desired_col_order = ['Kills', 'Deaths', 'Assists', 'Accuracy', 'DamageDone', 'DamageTaken','Outcome']
 
-catKD = catKD.reindex(desired_col_order, axis=1)
-catKD = catKD.round(2)
-catKD[['DamageDone', 'DamageTaken']] = catKD[['DamageDone', 'DamageTaken']].round()
 
-# GameMode per 10 min stats
-cat10KD = df.pivot_table(index='Category', 
-                        values=['Kills/10Min', 'Deaths/10Min', 'Assists/10Min', 'Dmg/10Min', 'DmgT/10Min', 'Outcome'], 
-                        aggfunc='mean')
+# Sidebar Filters
+map_filter = st.sidebar.selectbox('Map', ['All'] + list(dfr['Map'].unique()), index=0)
+mode_filter = st.sidebar.selectbox('Mode', ['All'] + list(dfr['Category'].unique()), index=0)
+start_date = st.sidebar.date_input('Start Date', min_value=dfr['Date'].min(),  max_value=dt.date.today(), value=dfr['Date'].min())
+end_date = st.sidebar.date_input('End Date', min_value=dfr['Date'].min(), max_value=dt.date.today(), value=dfr['Date'].max())
+st.sidebar.markdown('To clear filters reload the webpage')
+st.sidebar.markdown('\n')
+st.sidebar.markdown("Made with ❤️ by [palmerac](https://github.com/palmerac)")
+# Apply Filters
+if 'All' in map_filter:
+    dfr = dfr
+else:
+    dfr = dfr[dfr['Map'] == map_filter]
 
-desired_col10_order = ['Kills/10Min', 'Deaths/10Min', 'Assists/10Min', 'Dmg/10Min', 'DmgT/10Min', 'Outcome']
+if 'All' in mode_filter:
+    dfr = dfr
+else:
+    dfr = dfr[dfr['Category'] == mode_filter]
 
-cat10KD = cat10KD.reindex(desired_col10_order, axis=1)
-cat10KD = cat10KD.round(2)
-cat10KD[['Dmg/10Min', 'DmgT/10Min']] = cat10KD[['Dmg/10Min', 'DmgT/10Min']].round()
+dfr = dfr[(dfr['Date'] >= np.datetime64(start_date)) & (dfr['Date'] <= np.datetime64(end_date))]
 
-# Map/Mode Stats
-catmapKD = df.pivot_table(index=['Map', 'Category'], 
-                        values=['Kills', 'Deaths', 'Assists', 'Accuracy', 'DamageDone', 'DamageTaken','Outcome'], 
-                        aggfunc='mean')
+total_time_played = dfr['LengthMinutes'].sum()
+days = total_time_played // (24 * 60)
+hours = (total_time_played % (24 * 60)) // 60
+minutes = total_time_played % 60
 
-desired_col_order = ['Kills', 'Deaths', 'Assists', 'Accuracy', 'DamageDone', 'DamageTaken','Outcome']
-
-catmapKD = catmapKD.reindex(desired_col_order, axis=1)
-catmapKD = catmapKD.round(2)
-catmapKD[['DamageDone', 'DamageTaken']] = catmapKD[['DamageDone', 'DamageTaken']].round()
-
-# Map/Mode per 10 min stats
-catmap10KD = df.pivot_table(index=['Map', 'Category'], 
-                        values=['Kills/10Min', 'Deaths/10Min', 'Assists/10Min', 'Dmg/10Min', 'DmgT/10Min', 'Outcome'], 
-                        aggfunc='mean')
-
-desired_col10_order = ['Kills/10Min', 'Deaths/10Min', 'Assists/10Min', 'Dmg/10Min', 'DmgT/10Min', 'Outcome']
-
-catmap10KD = catmap10KD.reindex(desired_col10_order, axis=1)
-catmap10KD = catmap10KD.round(2)
-catmap10KD[['Dmg/10Min', 'DmgT/10Min']] = catmap10KD[['Dmg/10Min', 'DmgT/10Min']].round()
-
-# Totals
-st.write("Win-Loss:", cnt(dfw, "Outcome"), "-", cnt(dfl, "Outcome"))
-st.write("Current CSR:", df['Csr'].iloc[-1])
-st.write("Maximum CSR:", df['Csr'].max())
-st.write("Time Played(h):", round(tot(df, 'LengthSeconds')/60/60,2))
-st.write("Kills:",tot(df,"Kills",),)
-st.write("Deaths:",tot(df,"Deaths",),)
-st.write("Assists:",tot(df,"Assists",),)
-st.write("Accuracy(%):",acc(df,2),)
-st.write("Medals:",tot(df,"Medals",),)
-st.write("Damage Done:",tot(df,"DamageDone",),)
-st.write("Damage Taken:",tot(df,"DamageTaken",),)
-
-# Tabs
-tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs(
-    [
-        "KD/Damage/WR/Acc Over Time",
-        "KD/Damage/CSR Over Time",
-        "Boxplots",
-        "Stats in Wins vs Losses",
-        "Map & Mode Stats",
-        "Map/Mode Stats",
-        "Raw Data",
-    ]
-)
+tab1, tab2, tab3, tab4 = st.tabs(['Summary', 'Charts', 'Last x Games', 'Statogami'])
 
 with tab1:
-    st.image("Plots/DamKDWRAcc.png")
-    pass
+    st.subheader('Summary')
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.text(f"Total Time Played: {int(days)}d, {int(hours)}h, {int(minutes)}min")
+        st.text(f"Games Played: {len(dfr)}")
+        st.text(f"Current CSR: {dfr['Csr'].iloc[-1]}")
+        st.text(f"Highest CSR: {dfr['Csr'].max()}")
+        st.text(f"Winrate: {round(len(dfr[dfr['Outcome'] == 1]) / len(dfr[dfr['Outcome'] == 0]),2)}")
+        st.text(f"Wins-Losses-Draws: {len(dfr[dfr['Outcome'] == 1])}-{len(dfr[dfr['Outcome'] == 0])}-{len(dfr[dfr['Outcome'] == 0.5])}")
+        st.text(f"KD: {round(dfr['Kills'].sum() / dfr['Deaths'].sum(),2)}")
+        st.text(f"Accuracy: {round(dfr['ShotsLanded'].sum() / dfr['ShotsFired'].sum()*100,2)}%")
+        st.text(f"Damage Ratio: {round(dfr['DamageDone'].sum() / dfr['DamageTaken'].sum(),2)}")
+        st.text(f"Damage/Life: {round(dfr['DamageDone'].sum() / dfr['Deaths'].sum(),2)}")
+        st.text(f"Damage/KA: {round(dfr['DamageDone'].sum() / (dfr['Kills'].sum() + dfr['Assists'].sum()),2)}")
+
+
+    with col2:
+        for i in ['Kills', 'Deaths', 'Assists', 'DamageDone', 'DamageTaken', 'ShotsLanded', 'ShotsFired', 'Betrayals', 'Suicides', 'Medals']:
+            total_value = dfr[i].sum()
+            avg_value = round(total_value / len(dfr), 1)
+            # Check if the total value is greater than 10,000
+            if total_value > 10000:
+                total_value_formatted = "{:,}".format(total_value)
+            else:
+                total_value_formatted = str(total_value)
+            st.text(f"{i}: {total_value_formatted} ({avg_value})")
+    
 
 with tab2:
-    st.image("Plots/KDDamCSR.gif")
-    pass
+    tab21, tab22, tab23 = st.tabs(['Moving Average', 'Lifetime', 'Boxplot'])
+    with tab21:
+        # Create a dropdown list to select a column
+        ma_cols = ['Csr', 'Kills', 'Kills/10Min', 'Deaths','Deaths/10Min', 'Assists', 'Assists/10Min',
+                    'DamageDone', 'DamageDone/10Min', 'DamageTaken', 'DamageTaken/10Min', 'Damage/Life',
+                    'Assists/Life', 'Damage/KA']
+        selected_columns = st.multiselect('Select columns', ma_cols, default=ma_cols[0])
+
+        # Create an input cell to enter a moving average period
+        moving_average_period = st.number_input('Enter a moving average period', min_value=5, value=50, step=5)
+
+        # Plot the selected value over time with a moving average
+        fig, ax = plt.subplots(figsize=(16,10))
+        for col in selected_columns:
+            ax.plot(dfr.index, dfr[col].rolling(window=moving_average_period).mean())
+        plt.title(f"{', '.join(selected_columns)} {moving_average_period} Game Moving Average")
+        plt.xlabel('Index')
+        plt.ylabel('Value')
+        ax.legend()
+        st.pyplot(fig)
+
+    with tab22:
+        # Create a dropdown list to select a column
+        lf_cols = ['LifetimeKD', 'LifetimeDmgRatio', 'LifetimeAcc', 'LifetimeWinRate', 'Csr']
+        selected_columns = st.multiselect('Select columns', lf_cols, default=lf_cols[0])
+
+        # Plot the selected value over time with a moving average
+        fig, ax = plt.subplots(figsize=(16,10))
+        for col in selected_columns:
+            ax.plot(dfr.index, dfr[col])
+        plt.title(f"{', '.join(selected_columns).replace('Lifetime','')} Over Time")
+        plt.xlabel('Index')
+        plt.ylabel('Value')
+        ax.legend()
+        st.pyplot(fig)
+
+    with tab23:
+        columns = ['Kills', 'Deaths', 'Assists', 'KDA', 'DamageDone', 'DamageTaken', 'Csr', 'Accuracy']
+        fig, axes = plt.subplots(nrows=4, ncols=2, figsize=(15, 15))
+        axes = axes.flatten()
+        for i, column in enumerate(columns):
+            sns.boxplot(x=dfr[column], ax=axes[i])
+            axes[i].set_title(column)
+        plt.suptitle('Boxplots of Game Stats', fontsize=20)
+        plt.tight_layout()
+        st.pyplot(fig)
 
 with tab3:
-    st.image("Plots/Boxplots.png")
-    pass
+    st.subheader('Last x Games')
+    tail = int(st.number_input('Enter value for x: ', step=5, value=10))
 
-with tab4:
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.markdown("## Total")
-        st.write("Average Kills:", avg(df, "Kills", 2))
-        st.write("Average Deaths:", avg(df, "Deaths", 2))
-        st.write("KD Ratio:", round(tot(df,"Kills") / tot(df, "Deaths"),2))
-        st.write("Average Assists:", avg(df, "Assists", 2))
-        st.write("Accuracy(%):", acc(df,2))
-        st.write("Damage Ratio:", round(tot(df, "DamageDone") / tot(df, "DamageTaken"), 2))
-        st.write("Average Damage Done:", avg(df, "DamageDone",))
-        st.write("Average Damage Taken:", avg(df, "DamageTaken",))
-        st.markdown("  \n  ")
-        st.markdown('#### Per 10 Minute Stats')
-        st.write("Average Kills/10Min:", avg(df, "Kills/10Min", 2))
-        st.write("Average Deaths/10Min:", avg(df, "Deaths/10Min", 2))
-        st.write("Average Assists/10Min:", avg(df, "Assists/10Min", 2))
-        st.write("Average Damage/10Min:", avg(df, "Dmg/10Min",)) 
-        st.write("Average Damage Taken/10Min:", avg(df, "DmgT/10Min",))
-        pass
-    
-    with col2:
-        st.markdown("## Wins")
-        st.write("Average Kills:", avg(dfw, "Kills", 2))
-        st.write("Average Deaths:", avg(dfw, "Deaths", 2))
-        st.write("KD Ratio:", round(tot(dfw,"Kills") / tot(dfw, "Deaths"),2))
-        st.write("Average Assists:", avg(dfw, "Assists", 2))
-        st.write("Accuracy(%):", acc(dfw,2))
-        st.write("Damage Ratio:", round(tot(dfw, "DamageDone") / tot(dfw, "DamageTaken"), 2))
-        st.write("Average Damage Done:", avg(dfw, "DamageDone",))
-        st.write("Average Damage Taken:", avg(dfw, "DamageTaken",))
-        st.markdown("  \n  ")
-        st.markdown('#### Per 10 Minute Stats')
-        st.write("Average Kills/10Min:", avg(dfw, "Kills/10Min", 2))
-        st.write("Average Deaths/10Min:", avg(dfw, "Deaths/10Min", 2))
-        st.write("Average Assists/10Min:", avg(dfw, "Assists/10Min", 2))
-        st.write("Average Damage/10Min:", avg(dfw, "Dmg/10Min",)) 
-        st.write("Average Damage Taken/10Min:", avg(dfw, "DmgT/10Min",))
-        pass
+    tab31, tab32 = st.tabs(['Statistics', 'Raw Data'])
+    dfTail = dfr.tail(tail)
 
-    with col3:
-        st.markdown("## Losses")
-        st.write("Average Kills:", avg(dfl, "Kills", 2))
-        st.write("Average Deaths:", avg(dfl, "Deaths", 2))
-        st.write("KD Ratio:", round(tot(dfl,"Kills") / tot(dfl, "Deaths"),2))
-        st.write("Average Assists:", avg(dfl, "Assists", 2))
-        st.write("Accuracy(%):", acc(dfl,2))
-        st.write("Damage Ratio:", round(tot(dfl, "DamageDone") / tot(dfl, "DamageTaken"), 2))
-        st.write("Average Damage Done:", avg(dfl, "DamageDone",))
-        st.write("Average Damage Taken:", avg(dfl, "DamageTaken",))
-        st.markdown("  \n  ")
-        st.markdown('#### Per 10 Minute Stats')
-        st.write("Average Kills/10Min:", avg(dfl, "Kills/10Min", 2))
-        st.write("Average Deaths/10Min:", avg(dfl, "Deaths/10Min", 2))
-        st.write("Average Assists/10Min:", avg(dfl, "Assists/10Min", 2))
-        st.write("Average Damage/10Min:", avg(dfl, "Dmg/10Min",)) 
-        st.write("Average Damage Taken/10Min:", avg(dfl, "DmgT/10Min",))
+    col31, col32, col33 = st.columns(3)
+    with tab31:
+        wins = len(dfTail[dfTail['Outcome'] == 1])
+        losses = len(dfTail[dfTail['Outcome'] == 0])
+        draws = len(dfTail[dfTail['Outcome'] == 0.5])
+        st.text(f"Wins-Losses-Draws: {wins}-{losses}-{draws}")
+        st.text(f"Winrate: {round(wins/losses,2)}")
+
+        with col31:
+            st.markdown('#### Regular')
+            for i in ['Kills', 'Deaths', 'Assists']:
+                st.text(f'{i}: {dfTail[i].sum()} ({round(dfTail[i].sum()/tail,1)})')
+            st.text(f"KD: {round(dfTail['Kills'].sum() / dfTail['Deaths'].sum(),2)}")
+            st.text(f"Damage Ratio: {round(dfTail['DamageDone'].sum() / dfTail['DamageTaken'].sum(),2)}")
+            st.text(f"Accuracy: {round(dfTail['ShotsLanded'].sum() / dfTail['ShotsFired'].sum()*100,2)}")
         
-        pass
+        with col32:
+            st.markdown('#### Per 10 Min')
+            for i in ['Kills/10Min', 'Deaths/10Min', 'Assists/10Min']:
+                st.text(f'{i.replace("/10Min", "")}: {round(dfTail[i].sum(),)} ({round(dfTail[i].sum()/tail,1)})')
+            st.text(f"KD: {round(dfTail['Kills/10Min'].sum() / dfTail['Deaths/10Min'].sum(), 2)}")
+            st.text(f"Damage Ratio: {round(dfTail['DamageDone/10Min'].sum() / dfTail['DamageTaken/10Min'].sum(), 2)}")
+            st.text(f"Accuracy: {round(dfTail['ShotsLanded/10Min'].sum() / dfTail['ShotsFired/10Min'].sum()*100, 2)}")
 
-with tab5:
-    col1, col2 = st.columns(2)
-    with col1:
-        st.markdown('## Map Stats')
-        st.dataframe(mapKD)
-        st.markdown('#### Per 10 min')
-        st.dataframe(map10KD)
-        pass
-    with col2:
-        st.markdown('## Mode Stats')
-        st.dataframe(catKD)
-        st.markdown('\n\n  ')
-        st.markdown('#### Per 10 min')
-        st.dataframe(cat10KD)
-        pass
-    pass
-    st.image('Plots/ModeDistro.png')
 
-with tab6:
-    col1, col2 = st.columns(2)
-    with col1:
-        st.markdown('## Map/Mode')
-        st.dataframe(catmapKD)
-        pass
-    with col2:
-        st.markdown('## Map/Mode Per 10 Min')
-        st.dataframe(catmap10KD)
-        pass
-    pass
+    with tab32:
+        st.dataframe(dfTail)
 
-with tab7:
-    st.dataframe(df)
-    pass
+with tab4: 
+    st.subheader('Statogami')
+    st.text("Inspired by the NFL's scorigami but its statlines that are repeated instead of unique ones")
+    gamict = st.number_input("Enter minimum duplicate count", min_value=2)
+    st.text(f"Records with >= {gamict} duplicates: {gamiPiv[gamiPiv.values>=gamict].count()}")
+    st.dataframe(gamiPiv[gamiPiv.values>=gamict].sort_values(ascending=False))
