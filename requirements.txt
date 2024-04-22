@@ -3,6 +3,6 @@ pandas
 numpy
 matplotlib
 streamlit_extras
-ssl
+requests
 datetime
 seaborn

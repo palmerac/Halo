@@ -4,7 +4,8 @@ import streamlit as st
 import matplotlib.pyplot as plt
 import datetime as dt
 import seaborn as sns
-import ssl
+import requests
+from io import StringIO
 
 plt.style.use('ggplot')
 st.set_page_config(layout="wide")
@@ -21,8 +22,11 @@ fetch_from_website = st.sidebar.button("Fetch Stats")
 
 if 'df' not in st.session_state or fetch_from_website:
     try:
-        ssl._create_default_https_context = ssl._create_unverified_context
-        df = pd.read_csv(f'https://leafapp.co/player/{gamertag}/matches/csv/matches')
+        requests.packages.urllib3.disable_warnings()  # Disable SSL verification
+        url = f'https://leafapp.co/player/{gamertag}/matches/csv/matches'
+        response = requests.get(url, verify=False)
+        response.raise_for_status()  # Check if the request was successful
+        df = pd.read_csv(StringIO(response.text))
     except Exception as e:
         st.error(f"An error occurred while trying to fetch data from the website: {e}")
         df = pd.read_csv('earl694412-infinite-matchhistory.csv')
