@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import datetime as dt
 import seaborn as sns
 import requests
+import altair as alt
 from io import StringIO
 
 plt.style.use('ggplot')
@@ -71,7 +72,10 @@ df['Category'] = df['Category'].str.replace('3 Captures', '').str.replace('5 Cap
 
 df = df.drop(['Player', 'MatchId', 'Input', 'Queue', 'Mmr', 'WasAtStart', 'WasAtEnd',
             'WasInProgressJoin', 'AssistsEmp', 'AssistsDriver', 'AssistsCallout', 'VehicleDestroys',
-            'VehicleHijacks', 'Perfects', 'PreCsr', 'SeasonNumber', 'SeasonVersion'],axis=1)
+            'VehicleHijacks', 'Perfects', 'PreCsr', 'SeasonNumber', 'SeasonVersion', 'WinningTeamScore',
+            'WinningTeam','WinningTeamCSR', 'WinningTeamMMR', 'WinningTeamFinalScore', 'WinningTeamWinPercentChance',
+            'LosingTeam', 'LosingTeamCSR', 'LosingTeamMMR', 'LosingTeamScore' ,'LosingTeamFinalScore',
+            'LosingTeamWinPercentChance'], axis=1)
 dfr = df[df['Date']> '2023-01-01']
 dfr = dfr[dfr['Playlist'] == 'Ranked Arena']
 dfr['Csr'] = dfr['PostCsr'].replace(0, method='ffill')
@@ -99,8 +103,8 @@ gamiPiv = gamiPiv.sort_index()
 # Sidebar Filters
 map_filter = st.sidebar.selectbox('Map', ['All'] + list(dfr['Map'].unique()), index=0)
 mode_filter = st.sidebar.selectbox('Mode', ['All'] + list(dfr['Category'].unique()), index=0)
-start_date = st.sidebar.date_input('Start Date', min_value=dfr['Date'].min(),  max_value=dt.date.today(), value=dfr['Date'].min())
-end_date = st.sidebar.date_input('End Date', min_value=dfr['Date'].min(), max_value=dt.date.today(), value=dfr['Date'].max())
+start_date = st.sidebar.date_input('Start Date', min_value=dfr['Date'].min(),  max_value=dfr['Date'].max(), value=dfr['Date'].min())
+end_date = st.sidebar.date_input('End Date', min_value=dfr['Date'].min(), max_value=dfr['Date'].max(), value=dfr['Date'].max())
 st.sidebar.markdown('To clear filters reload the webpage')
 st.sidebar.markdown('\n')
 st.sidebar.markdown("Made with ❤️ by [palmerac](https://github.com/palmerac)")
@@ -125,7 +129,7 @@ avg_min = int((total_time_played / len(dfr)) // 1)
 avg_sec = int((total_time_played % 1) * 60)
 
 # Main Streamlit
-tab1, tab2, tab3, tab4, tab5 = st.tabs(['Summary', 'Charts', 'Last x Games', 'Statogami', 'Detailed Map/Mode'])
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(['Summary', 'Charts', 'Last x Games', 'Statogami', 'Detailed Map/Mode', 'Raw Data'])
 
 with tab1:
     st.subheader('Summary')
@@ -181,6 +185,24 @@ with tab2:
         plt.ylabel('Value')
         ax.legend()
         st.pyplot(fig)
+
+        # Add moving average line using Altair
+        moving_avg = dfr[selected_columns].rolling(window=moving_average_period).mean().reset_index()
+        # Unpivot selected columns
+        moving_avg_long = moving_avg.melt(id_vars='index', value_vars=selected_columns, var_name='column', value_name='value')
+        line_chart = alt.Chart(moving_avg_long).mark_line().encode(
+            x='index:T',  # Assuming your index is a datetime object, adjust as needed
+            y='value:Q',  # Specify data type as quantitative
+            color='column:N'  # Specify data type as nominal for color encoding
+        ).properties(
+            width=800,
+            height=400,
+            title=f"{', '.join(selected_columns)} {moving_average_period} Game Moving Average"
+        )
+
+        # Display the interactive Altair chart using Streamlit
+        st.altair_chart(line_chart, use_container_width=True)
+
 
     with tab22:
         mar_cols = ['KD', 'KDA', 'DamageRatio', 'Damage/KA', 'Damage/Life', 'ExDamage/Life', 'Assists/Life', 'Winrate']
@@ -425,3 +447,6 @@ with tab5:
         fig.legend(labels, loc="center")
         st.pyplot(fig)
         st.dataframe(dfrclenmap)
+
+with tab6:
+    st.dataframe(dfr)
